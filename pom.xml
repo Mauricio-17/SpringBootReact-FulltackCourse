@@ -54,7 +54,7 @@
 				<version>3.3.0</version>
 				<configuration>
 					<to>
-						<image>myimage</image>
+						<image>registry.hub.docker.com/mauricio17/fullstack-test</image>
 					</to>
 				</configuration>
 			</plugin>
