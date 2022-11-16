@@ -9,7 +9,7 @@ on:
 env:
   # Postgres
   POSTGRESQL_VERSION: 13.1
-  POSTGRESQL_DB: hellodata
+  POSTGRESQL_DB: mauricio
   POSTGRESQL_USER: postgres
   POSTGRESQL_PASSWORD: 1q2w3e4r5t
   # Java
