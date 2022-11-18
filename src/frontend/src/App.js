@@ -13,7 +13,9 @@ import {
   Tag,
   Avatar,
   Popconfirm,
-  Radio, Image, Divider
+  Radio,
+  Image,
+  Divider,
 } from "antd";
 
 import {
@@ -240,7 +242,10 @@ function App() {
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
-          
+          <Image
+            width={75}
+            src="https://user-images.githubusercontent.com/40702606/110871298-0ab98d00-82c6-11eb-88e8-20c4d5c9ded5.png"
+          />
           <Divider>
             <a
               rel="noopener noreferrer"
