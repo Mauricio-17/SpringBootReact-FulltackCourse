@@ -10,8 +10,8 @@ env:
   # Postgres
   POSTGRESQL_VERSION: 13.1
   POSTGRESQL_DB: hellodata
-  POSTGRESQL_USER: mauricio
-  POSTGRESQL_PASSWORD: 1q2w3e4r5t
+  POSTGRESQL_USER: postgres
+  POSTGRESQL_PASSWORD: 123456
   # Java
   JAVA_VERSION: 1.17
   # DockerHub
