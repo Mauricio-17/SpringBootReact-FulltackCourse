@@ -59,7 +59,7 @@ function StudentDrawerForm({
           console.log(err.response);
           err.response.json().then((res) => {
             errorNotification(
-              "Error while deleting :",
+              "Error while updating :",
               res.message,
               "bottomLeft"
             );
