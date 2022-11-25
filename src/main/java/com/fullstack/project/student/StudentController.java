@@ -22,6 +22,10 @@ public class StudentController {
         studentService.addStudent(student);
     }
 
+    @PutMapping("/{id}")
+    public void updateStudent(@Valid @RequestBody Student student, @PathVariable("id") Long id){
+        studentService.updateStudent(student, id);
+    }
 
     @DeleteMapping("/{id}")
     public void removeStudent(@PathVariable(name = "id") Long idStudent){

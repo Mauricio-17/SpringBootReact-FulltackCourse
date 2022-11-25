@@ -1,53 +1,94 @@
 //@ts-check
 // StudentDrawerForm.js
 import { Drawer, Input, Col, Select, Form, Row, Button, Spin } from "antd";
-import { addNewStudent } from "./client";
+import { addNewStudent, updateStudent } from "./client";
 import { LoadingOutlined } from "@ant-design/icons";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { successNotification, errorNotification } from "./notification";
 
 const { Option } = Select;
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
-function StudentDrawerForm({ showDrawer, setShowDrawer, fetchStudents }) {
-  const onCLose = () => setShowDrawer(false);
+function StudentDrawerForm({
+  showDrawer,
+  setShowDrawer,
+  fetchStudents,
+  setObj,
+  object,
+  idStudent,
+}) {
+  const onCLose = () => (setShowDrawer(false), setObj(null));
   const [submitting, setSubmitting] = useState(false);
 
   const onFinish = (student) => {
     setSubmitting(true);
     console.log(JSON.stringify(student, null, 2));
-    addNewStudent(student)
-      .then(() => {
-        console.log("student added");
-        onCLose();
-        successNotification(
-          "Student successfully added",
-          `${student.name} was added to the system`
-        );
-        fetchStudents();
-      })
-      .catch((err) => {
-        console.log(err.response);
-        err.response.json().then(res => {
-          errorNotification("Email error", res.message, "bottomLeft")
+    if (!object) {
+      addNewStudent(student)
+        .then(() => {
+          console.log("student added");
+          onCLose();
+          successNotification(
+            "Student successfully added",
+            `${student.name} was added to the system`
+          );
+          fetchStudents();
+        })
+        .catch((err) => {
+          console.log(err.response);
+          err.response.json().then((res) => {
+            errorNotification("Email error", res.message, "bottomLeft");
+          });
+        })
+        .finally(() => {
+          setSubmitting(false);
         });
-      })
-      .finally(() => {
-        setSubmitting(false);
-      });
+    } else {
+      updateStudent(student, idStudent)
+        .then(() => {
+          console.log("student edited");
+          onCLose();
+          successNotification(
+            "Student successfully edited",
+            `${student.name} was edited on the system`
+          );
+          fetchStudents();
+        })
+        .catch((err) => {
+          console.log(err.response);
+          err.response.json().then((res) => {
+            errorNotification(
+              "Error while deleting :",
+              res.message,
+              "bottomLeft"
+            );
+          });
+        })
+        .finally(() => {
+          setSubmitting(false);
+          setObj(null); // clearing the object passed
+        });
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
     alert(JSON.stringify(errorInfo, null, 2));
   };
 
+  // NO MATTER
+  // useEffect(() => {
+  //   console.log(student);
+  //   fetchStudents();
+  // }, []);
+
   return (
     <Drawer
-      title="Create new student"
+      title={object ? `Editing student ${object.name}` : "Create new student"}
       width={720}
       onClose={onCLose}
       visible={showDrawer}
+      destroyOnClose={true} // this property matters a lot
       bodyStyle={{ paddingBottom: 80 }}
       footer={
         <div
@@ -72,6 +113,7 @@ function StudentDrawerForm({ showDrawer, setShowDrawer, fetchStudents }) {
             <Form.Item
               name="name"
               label="Name"
+              initialValue={(object) ? object.name : ""}
               rules={[{ required: true, message: "Please enter student name" }]}
             >
               <Input placeholder="Please enter student name" />
@@ -81,6 +123,7 @@ function StudentDrawerForm({ showDrawer, setShowDrawer, fetchStudents }) {
             <Form.Item
               name="email"
               label="Email"
+              initialValue={(object) ? object.email : ""}
               rules={[
                 { required: true, message: "Please enter student email" },
               ]}
@@ -94,6 +137,7 @@ function StudentDrawerForm({ showDrawer, setShowDrawer, fetchStudents }) {
             <Form.Item
               name="gender"
               label="gender"
+              initialValue={(object) ? object.gender : ""}
               rules={[{ required: true, message: "Please select a gender" }]}
             >
               <Select placeholder="Please select a gender">
@@ -107,7 +151,7 @@ function StudentDrawerForm({ showDrawer, setShowDrawer, fetchStudents }) {
         <Row>
           <Col span={12}>
             <Form.Item>
-              <Button type="primary" htmlType="submit" onClick={() => {}}>
+              <Button type="primary" htmlType="submit">
                 Submit
               </Button>
             </Form.Item>
