@@ -1,4 +1,4 @@
-//@ts-check
+//@ts-check app.js
 import React, { useState, useEffect } from "react";
 import { getAllStudents, removeStudent } from "./client";
 import {
@@ -46,14 +46,14 @@ const TheAvatar = ({ name }) => {
   return <Avatar>{`${name.charAt(0)}${name.charAt(name.length - 1)}`}</Avatar>;
 };
 
-let onConfirm = (studentId, callback) => {
+let onConfirmDelete = (studentId, callback) => {
   removeStudent(studentId)
     .then(() => {
       successNotification(
         "Student deleted",
         `Student with ${studentId} was deleted`
       );
-      callback();
+      callback(); // update student list
     })
     .catch((err) => {
       err.response
@@ -62,7 +62,7 @@ let onConfirm = (studentId, callback) => {
     });
 };
 
-const columns = (fetchStudents) => [
+const columns = (fetchStudents, callback) => [
   {
     title: "",
     dataIndex: "avatar",
@@ -97,13 +97,15 @@ const columns = (fetchStudents) => [
         <Popconfirm
           paddingBottom="topRight"
           title={`Are you sure to delete ${student.name} ?`}
-          onConfirm={() => onConfirm(student.id, fetchStudents)}
+          onConfirm={() => onConfirmDelete(student.id, fetchStudents)}
           okText="Yes"
           cancelText="No"
         >
           <Radio.Button value="small">Delete</Radio.Button>
         </Popconfirm>
-        <Radio.Button value="default">Edit</Radio.Button>
+        <Radio.Button value="default" onClick={() => callback(student)}>
+          Edit
+        </Radio.Button>
       </Radio.Group>
     ),
   },
@@ -116,6 +118,8 @@ function App() {
   const [collapsed, setCollapsed] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [showDrawer, setShowDrawer] = useState(false);
+  const [obj, setObj] = useState(null);
+  const [id, setId] = useState(0);
 
   const fetchStudents = () =>
     getAllStudents()
@@ -141,6 +145,12 @@ function App() {
     fetchStudents();
   }, []);
 
+  const openStudentUpdate = (student) => { // from callback
+    setObj(student);
+    setId(student.id);
+    setShowDrawer(!showDrawer);
+  };
+
   const renderStudents = () => {
     if (fetching) {
       return <Spin indicator={antIcon} />;
@@ -161,6 +171,9 @@ function App() {
             showDrawer={showDrawer}
             setShowDrawer={setShowDrawer}
             fetchStudents={fetchStudents}
+            setObj={setObj}
+            object={(obj) ? obj : null}
+            idStudent={id}
           />
           <Empty />
         </>
@@ -172,10 +185,13 @@ function App() {
           showDrawer={showDrawer}
           setShowDrawer={setShowDrawer}
           fetchStudents={fetchStudents}
-        />
+          setObj={setObj}
+          object={(obj) ? obj : null}
+          idStudent={id}
+          />
         <Table
           dataSource={students}
-          columns={columns(fetchStudents)}
+          columns={columns(fetchStudents, openStudentUpdate)} // 2º parameter as a callback function
           bordered
           title={() => (
             <>
@@ -194,8 +210,8 @@ function App() {
               </Button>
             </>
           )}
-          pagination={{ pageSize: 50 }}
-          scroll={{ y: 500 }}
+          pagination={{ pageSize: 12 }} // amount of rows
+          scroll={{ y: 500 }} // height 
           rowKey={(student) => student.id}
         />
       </>
@@ -242,10 +258,6 @@ function App() {
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
-          <Image
-            width={75}
-            src="https://user-images.githubusercontent.com/40702606/110871298-0ab98d00-82c6-11eb-88e8-20c4d5c9ded5.png"
-          />
           <Divider>
             <a
               rel="noopener noreferrer"
