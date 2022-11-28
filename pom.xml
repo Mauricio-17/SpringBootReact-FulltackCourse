@@ -193,6 +193,7 @@
 						<version>1.11.2</version>
 						<configuration>
 							<nodeVersion>v16.16.0</nodeVersion>
+							<npmVersion>8.11.0</npmVersion>
 							<workingDirectory>src/frontend</workingDirectory>
 						</configuration>
 						<executions>
