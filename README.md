@@ -3,4 +3,4 @@
 
 Project: http://springbootreactfullstack-env.eba-seypcq9i.sa-east-1.elasticbeanstalk.com/ (Fuera de servicio temporalmente)
 
-Course: https://amigoscode.com/p/full-stack-spring-boot-react
+Course: https://amigoscode.com/p/full-stack-spring-boot-react-main
